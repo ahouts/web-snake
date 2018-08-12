@@ -1,0 +1,35 @@
+<html>
+<head>
+    <script src="/web-snake.js"></script>
+</head>
+<body>
+
+<div id="top-bar" style="height: 3vh; padding-bottom: 1vh;">
+    <button id="start-button" style="display: inline;">Click Here to Start A Game!</button>
+    <div style="display: inline;">WASD or touchscreen to move!</div>
+    <button id="scores-button" style="display: inline;">Show Scores</button>
+    <button id="options-button" style="display: inline;">Show Options</button>
+</div>
+<div id="scores" style="display: none;">
+    <h2>Scores</h2>
+</div>
+
+<div id="options" style="display: none;">
+    <h2>Options</h2>
+    <h4>Frame Rate</h4>
+    <input type="number" id="frame-rate" value="60">
+    <h4>Game Frame Rate (Speed)</h4>
+    <input type="number" id="game-frame-rate" value="10">
+    <h4>Width in Pixels</h4>
+    <input type="number" id="width" value="20">
+    <h4>Height in Pixels</h4>
+    <input type="number" id="height" value="20">
+    <div style="padding-top: 1vh; padding-bottom: 2vh;">
+        <button id="submit-options" style="display: block;">Submit</button>
+    </div>
+</div>
+
+<canvas id="snake-window" width="2000" height="2000" style="outline: black 3px solid; display: block; width: calc(100vw - 16px); height: calc(96vh - 16px);"></canvas>
+
+</body>
+</html>
