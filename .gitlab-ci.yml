@@ -1,10 +1,9 @@
-image: rust:slim-stretch
-
 stages:
   - build
   - deploy
 
 build:
+  image: rust:slim-stretch
   script:
   - apt-get update
   - apt-get install -y libssl-dev openssl pkg-config
@@ -15,8 +14,7 @@ build:
   artifacts:
     paths:
     - static
-  only:
-  - master
+  only: [master]
   cache:
   - target/
   - $HOME/.cargo
