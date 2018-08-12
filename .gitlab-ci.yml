@@ -9,7 +9,7 @@ cache:
 pages:
   script:
   - apt-get update
-  - apt-get install -y libssl-dev openssl
+  - apt-get install -y libssl-dev openssl pkg-config
   - cargo install cargo-web -f
   - cargo web build
   - cp ./target/wasm32-unknown-unknown/release/web-snake.js ./static/
