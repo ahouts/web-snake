@@ -1,12 +1,10 @@
 image: rust:slim-stretch
 
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-  - target/
-  - ~/.cargo/
+stages:
+  - build
+  - deploy
 
-pages:
+build:
   script:
   - apt-get update
   - apt-get install -y libssl-dev openssl pkg-config
@@ -19,3 +17,18 @@ pages:
     - static
   only:
   - master
+  cache:
+  - target/
+  - $HOME/.cargo
+
+deploy:
+  image: python:latest
+  only: [master]
+  stage: deploy
+  dependencies: 
+    - build
+  script:
+  - pip install awscli
+  - aws s3 cp ./static/ s3://snake.ahouts.com/ --recursive
+  - aws cloudfront create-invalidation --distribution-id E7AID7CR7V4S3 --paths '/*'
+
