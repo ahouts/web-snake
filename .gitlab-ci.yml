@@ -1,9 +1,16 @@
 image: rust:slim-stretch
 
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - target/
+  - ~/.cargo/
+
 pages:
   script:
-  - apt update
-  - apt install libssl-dev -y
+  - apt-get update
+  - apt-get install libssl-dev -y
+  - source /etc/environment
   - cargo install cargo-web -f
   - cargo web build
   - cp ./target/wasm32-unknown-unknown/release/web-snake.js ./static/
