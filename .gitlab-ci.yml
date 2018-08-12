@@ -2,6 +2,8 @@ image: rust:slim-stretch
 
 pages:
   script:
+  - sudo apt update
+  - sudo apt install libssl-dev
   - cargo install cargo-web -f
   - cargo web build
   - cp ./target/wasm32-unknown-unknown/release/web-snake.js ./static/
