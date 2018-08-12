@@ -15,9 +15,6 @@ build:
     paths:
     - static
   only: [master]
-  cache:
-  - target/
-  - $HOME/.cargo
 
 deploy:
   image: python:latest
