@@ -1,0 +1,13 @@
+image: rust:slim-stretch
+
+pages:
+  script:
+  - cargo install cargo-web -f
+  - cargo web build
+  - cp ./target/wasm32-unknown-unknown/release/web-snake.js ./static/
+  - cp ./target/wasm32-unknown-unknown/release/web-snake.wasm ./static/
+  artifacts:
+    paths:
+    - static
+  only:
+  - master
