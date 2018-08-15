@@ -19,17 +19,21 @@
     <h4>Frame Rate</h4>
     <input type="number" id="frame-rate" value="60">
     <h4>Game Frame Rate (Speed)</h4>
-    <input type="number" id="game-frame-rate" value="10">
-    <h4>Width in Pixels</h4>
-    <input type="number" id="width" value="20">
-    <h4>Height in Pixels</h4>
-    <input type="number" id="height" value="20">
+    <input type="number" id="game-frame-rate" value="4">
+    <h4>Render Width (px)</h4>
+    <input type="number" id="canvas-width" value="1000">
+    <h4>Render Height (px)</h4>
+    <input type="number" id="canvas-height" value="600">
+    <h4>Game Width (squares)</h4>
+    <input type="number" id="width" value="10">
+    <h4>Game Height (squares)</h4>
+    <input type="number" id="height" value="6">
     <div style="padding-top: 1vh; padding-bottom: 2vh;">
         <button id="submit-options" style="display: block;">Submit</button>
     </div>
 </div>
 
-<canvas id="snake-window" width="2000" height="2000" style="outline: black 3px solid; display: block; width: calc(100vw - 16px); height: calc(96vh - 16px);"></canvas>
+<canvas id="snake-window" width="1000" height="600" style="outline: black 3px solid; display: block; width: calc(100vw - 16px); height: calc(96vh - 16px);"></canvas>
 
 </body>
 </html>

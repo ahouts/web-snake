@@ -107,17 +107,18 @@ fn get_value(n: &InputElement) -> u32 {
 fn main() {
     initialize();
 
+    let canvas: CanvasElement = document()
+        .query_selector("#snake-window")
+        .unwrap()
+        .unwrap()
+        .try_into()
+        .unwrap();
     let cfg = Rc::new(RefCell::new(Cfg {
         width: 20,
         height: 20,
         game_frame_rate: 10,
         frame_rate: 60,
-        canvas: document()
-            .query_selector("#snake-window")
-            .unwrap()
-            .unwrap()
-            .try_into()
-            .unwrap(),
+        canvas: canvas.clone(),
     }));
 
     let button = document().query_selector("#start-button").unwrap().unwrap();
@@ -149,9 +150,12 @@ fn main() {
     let option_frame_rate: InputElement = document().query_selector("#frame-rate").unwrap().unwrap().try_into().unwrap();
     let option_game_frame_rate: InputElement = document().query_selector("#game-frame-rate").unwrap().unwrap().try_into().unwrap();
     let option_width: InputElement = document().query_selector("#width").unwrap().unwrap().try_into().unwrap();
+    let option_canvas_height: InputElement = document().query_selector("#canvas-height").unwrap().unwrap().try_into().unwrap();
+    let option_canvas_width: InputElement = document().query_selector("#canvas-width").unwrap().unwrap().try_into().unwrap();
     let option_height: InputElement = document().query_selector("#height").unwrap().unwrap().try_into().unwrap();
     let submit_options = document().query_selector("#submit-options").unwrap().unwrap();
     submit_options.add_event_listener({
+        let canvas = canvas.clone();
         let cfg = cfg.clone();
         move |_: ClickEvent| {
             let mut cfg = cfg.borrow_mut();
@@ -159,6 +163,8 @@ fn main() {
             cfg.game_frame_rate = get_value(&option_game_frame_rate);
             cfg.width = get_value(&option_width);
             cfg.height = get_value(&option_height);
+            canvas.set_attribute("width", get_value(&option_canvas_width).to_string().as_str()).expect("failed to set canvas width");
+            canvas.set_attribute("height", get_value(&option_canvas_height).to_string().as_str()).expect("failed to set canvas height");
         }
     });
 
