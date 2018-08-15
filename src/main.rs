@@ -100,12 +100,23 @@ fn toggle_display(n: &Element) {
     }
 }
 
+fn game_in_progress(game_playing: Rc<RefCell<bool>>) -> bool {
+    *game_playing.as_ref().borrow()
+}
+
+fn set_game_in_progress(game_playing: Rc<RefCell<bool>>, val: bool) {
+    let mut playing = game_playing.as_ref().borrow_mut();
+    *playing = val;
+}
+
 fn get_value(n: &InputElement) -> u32 {
     n.raw_value().parse().unwrap()
 }
 
 fn main() {
     initialize();
+
+    let game_playing = Rc::new(RefCell::new(false));
 
     let canvas: CanvasElement = document()
         .query_selector("#snake-window")
@@ -114,9 +125,9 @@ fn main() {
         .try_into()
         .unwrap();
     let cfg = Rc::new(RefCell::new(Cfg {
-        width: 20,
-        height: 20,
-        game_frame_rate: 10,
+        width: 8,
+        height: 6,
+        game_frame_rate: 4,
         frame_rate: 60,
         canvas: canvas.clone(),
     }));
@@ -124,19 +135,25 @@ fn main() {
     let button = document().query_selector("#start-button").unwrap().unwrap();
     button.add_event_listener({
         let cfg = cfg.clone();
+        let game_playing = game_playing.clone();
         move |_: ClickEvent| {
-            run_snake_game(&cfg, |res| {
-                match res {
-                    Err(e) => {
-                        web::window().alert(e.as_ref());
+            let game_playing = game_playing.clone();
+            if !game_in_progress(game_playing.clone()) {
+                set_game_in_progress(game_playing.clone(), true);
+                run_snake_game(&cfg, move |res| {
+                    match res {
+                        Err(e) => {
+                            web::window().alert(e.as_ref());
+                        }
+                        Ok(r) => {
+                            let new_div = document().create_element("p").unwrap();
+                            new_div.set_text_content(format!("score: {}", r.apples_eaten).as_ref());
+                            web::document().query_selector("#scores").unwrap().unwrap().append_child(&new_div);
+                        }
                     }
-                    Ok(r) => {
-                        let new_div = document().create_element("p").unwrap();
-                        new_div.set_text_content(format!("score: {}", r.apples_eaten).as_ref());
-                        web::document().query_selector("#scores").unwrap().unwrap().append_child(&new_div);
-                    }
-                }
-            });
+                    set_game_in_progress(game_playing, false);
+                });
+            }
         }
     });
 

@@ -2,9 +2,9 @@ use stdweb::web::html_element::CanvasElement;
 use stdweb::web::CanvasRenderingContext2d;
 use graphics_data::GraphicsData;
 use graphics_data::PixelData;
-use time::Duration;
 use js_utils::get_date;
 use chrono::{DateTime, FixedOffset};
+use time::Duration;
 
 pub struct Canvas {
     canvas_dom_element: CanvasElement,
