@@ -8,9 +8,9 @@ extern crate chrono;
 extern crate time;
 
 use stdweb::{initialize, event_loop};
-use stdweb::web::{self, document, IParentNode, IEventTarget, INode, Element, IElement};
+use stdweb::web::{self, document, IParentNode, IEventTarget, INode, Element, IElement, IHtmlElement};
 use stdweb::web::html_element::{CanvasElement, InputElement};
-use stdweb::web::event::{KeyDownEvent, ClickEvent};
+use stdweb::web::event::{KeyDownEvent, ClickEvent, IMouseEvent};
 use stdweb::traits::IKeyboardEvent;
 use stdweb::unstable::TryInto;
 use std::cell::RefCell;
@@ -20,6 +20,9 @@ mod canvas;
 mod snake;
 mod graphics_data;
 mod js_utils;
+mod triangle;
+
+use triangle::{Point, Triangle};
 
 struct Cfg {
     canvas: CanvasElement,
@@ -58,6 +61,54 @@ fn run_snake_game<F>(cfg_cell: &Rc<RefCell<Cfg>>, res: F)
             return;
         }
     };
+
+    cfg.canvas.clone().add_event_listener({
+        let snake = snake_game.clone();
+        let canvas = cfg.canvas.clone();
+        move |event: ClickEvent| {
+            let mut snake = snake.borrow_mut();
+            let bounding_rect = canvas.get_bounding_client_rect();
+            let click_point = Point::new(
+                event.client_x() - bounding_rect.get_left() as i32,
+                event.client_y() - bounding_rect.get_top() as i32
+            );
+
+
+            let width = canvas.width() as i32;
+            let height = canvas.height() as i32;
+
+            let up_triangle = Triangle::new(
+                Point::new(0, 0),
+                Point::new(width, 0),
+                Point::new(width/2, height/2),
+            );
+            let down_triangle = Triangle::new(
+                Point::new(0, height),
+                Point::new(width, height),
+                Point::new(width/2, height/2),
+            );
+            let left_triangle = Triangle::new(
+                Point::new(0, 0),
+                Point::new(0, height),
+                Point::new(width/2, height/2),
+            );
+            let right_triangle = Triangle::new(
+                Point::new(width, 0),
+                Point::new(width, height),
+                Point::new(width/2, height/2),
+            );
+
+            if up_triangle.contains(&click_point) {
+                snake.press_key(snake::MoveDirection::Up)
+            } else if down_triangle.contains(&click_point) {
+                snake.press_key(snake::MoveDirection::Down)
+            } else if left_triangle.contains(&click_point) {
+                snake.press_key(snake::MoveDirection::Left)
+            } else if right_triangle.contains(&click_point) {
+                snake.press_key(snake::MoveDirection::Right)
+            }
+        }
+    });
     let snake_canvas = Rc::new(RefCell::new(snake_canvas));
 
     fn main_loop<F>(c: Rc<RefCell<canvas::Canvas>>, s: Rc<RefCell<snake::SnakeGameLogic>>, res: F)

@@ -42,6 +42,7 @@ impl Canvas {
             for pixel in data.pixels.iter() {
                 self.draw_pixel(pixel, pixel_width, pixel_height);
             }
+            self.draw_x();
         }
         time_diff = get_date() - self.last_frame;
         time_diff = self.duration_between_frames - time_diff;
@@ -62,6 +63,22 @@ impl Canvas {
                 self.ctx.fill_rect((c1.0 + x as f64) * pixel_width, (c1.1 + y as f64) * pixel_height, c2.0 * pixel_width, c2.1 * pixel_height);
             },
         }
+    }
+
+    fn draw_x(&self) {
+        let w = self.canvas_dom_element.width() as f64;
+        let h = self.canvas_dom_element.height() as f64;
+        self.ctx.set_stroke_style_color("black");
+        self.ctx.set_line_width(2.0);
+        self.ctx.begin_path();
+        self.ctx.move_to(0.0, 0.0);
+        self.ctx.line_to(w, h);
+        self.ctx.stroke();
+        self.ctx.set_line_width(2.0);
+        self.ctx.begin_path();
+        self.ctx.move_to(w, 0.0);
+        self.ctx.line_to(0.0, h);
+        self.ctx.stroke();
     }
 
     fn clear_screen(&self) {
