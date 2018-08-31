@@ -10,7 +10,7 @@ extern crate time;
 use stdweb::{initialize, event_loop};
 use stdweb::web::{self, document, IParentNode, IEventTarget, INode, Element, IElement, IHtmlElement};
 use stdweb::web::html_element::{CanvasElement, InputElement};
-use stdweb::web::event::{KeyDownEvent, ClickEvent, IMouseEvent};
+use stdweb::web::event::{KeyDownEvent, ClickEvent, IMouseEvent, MouseDownEvent};
 use stdweb::traits::IKeyboardEvent;
 use stdweb::unstable::TryInto;
 use std::cell::RefCell;
@@ -65,14 +65,13 @@ fn run_snake_game<F>(cfg_cell: &Rc<RefCell<Cfg>>, res: F)
     cfg.canvas.clone().add_event_listener({
         let snake = snake_game.clone();
         let canvas = cfg.canvas.clone();
-        move |event: ClickEvent| {
+        move |event: MouseDownEvent| {
             let mut snake = snake.borrow_mut();
             let bounding_rect = canvas.get_bounding_client_rect();
             let click_point = Point::new(
                 event.client_x() - bounding_rect.get_left() as i32,
                 event.client_y() - bounding_rect.get_top() as i32
             );
-
 
             let width = canvas.width() as i32;
             let height = canvas.height() as i32;
