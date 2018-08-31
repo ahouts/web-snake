@@ -2,6 +2,11 @@
 <head>
     <script src="web-snake.js"></script>
     <style>
+        html, body {
+            margin: 0;
+            height: 100%;
+            overflow: hidden
+        }
         .inline-button {
             background-color: #2f33af;
             border: none;
@@ -25,6 +30,11 @@
             font-size: 2vh;
             margin: 1.4vh 2.6vh;
             cursor: pointer;
+        }
+        #snake-window {
+            margin: 6px;
+            outline: black 3px solid;
+            display: block;
         }
     </style>
 </head>
@@ -59,7 +69,7 @@
     </div>
 </div>
 
-<canvas id="snake-window" width="640" height="480" style="outline: black 3px solid; display: block;"></canvas>
+<canvas id="snake-window" width="640" height="480"></canvas>
 
 </body>
 </html>

@@ -42,6 +42,7 @@ impl Canvas {
             for pixel in data.pixels.iter() {
                 self.draw_pixel(pixel, pixel_width, pixel_height);
             }
+            self.draw_grid(pixel_width, pixel_height);
             self.draw_x();
         }
         time_diff = get_date() - self.last_frame;
@@ -68,6 +69,45 @@ impl Canvas {
     fn draw_x(&self) {
         let w = self.canvas_dom_element.width() as f64;
         let h = self.canvas_dom_element.height() as f64;
+        self.ctx.set_stroke_style_color("black");
+        self.ctx.set_line_width(2.0);
+        self.ctx.begin_path();
+        self.ctx.move_to(0.0, 0.0);
+        self.ctx.line_to(w, h);
+        self.ctx.stroke();
+        self.ctx.set_line_width(2.0);
+        self.ctx.begin_path();
+        self.ctx.move_to(w, 0.0);
+        self.ctx.line_to(0.0, h);
+        self.ctx.stroke();
+    }
+
+    fn draw_grid(&self, pixel_width: f64, pixel_height: f64) {
+        let w = self.canvas_dom_element.width() as f64;
+        let h = self.canvas_dom_element.height() as f64;
+
+        let mut curr_h = h;
+        while curr_h > 0.0 {
+            self.ctx.set_stroke_style_color("grey");
+            self.ctx.set_line_width(1.0);
+            self.ctx.begin_path();
+            self.ctx.move_to(0.0, curr_h);
+            self.ctx.line_to(w, curr_h);
+            self.ctx.stroke();
+            curr_h -= pixel_height;
+        }
+
+        let mut curr_w = w;
+        while curr_w > 0.0 {
+            self.ctx.set_stroke_style_color("grey");
+            self.ctx.set_line_width(1.0);
+            self.ctx.begin_path();
+            self.ctx.move_to(curr_w, 0.0);
+            self.ctx.line_to(curr_w, h);
+            self.ctx.stroke();
+            curr_w -= pixel_width;
+        }
+
         self.ctx.set_stroke_style_color("black");
         self.ctx.set_line_width(2.0);
         self.ctx.begin_path();
