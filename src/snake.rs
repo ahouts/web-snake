@@ -7,10 +7,10 @@ use chrono::{DateTime, FixedOffset};
 use time::Duration;
 use std::time::Duration as StdDuration;
 use std::ops::Sub;
-use std::collections::LinkedList;
+use std::collections::{LinkedList, HashSet};
 use js_utils::{get_date, random};
 
-#[derive(Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Eq, PartialEq, Serialize, Deserialize, Hash)]
 struct Location {
     x: i32,
     y: i32,
@@ -285,15 +285,19 @@ impl SnakeGameLogic {
     }
 
     fn place_new_apple(&mut self) {
-        loop {
-            let loc = Location {
-                x: (random() * self.width as f64) as i32,
-                y: (random() * self.height as f64) as i32,
-            };
-            if let CollisionType::None = self.detect_collision(&loc) {
-                self.apple = loc;
-                break;
+        let mut valid_locs: HashSet<Location> = HashSet::new();
+        for y in 0..(self.height as i32) {
+            for x in 0..(self.width as i32) {
+                valid_locs.insert(Location{x, y});
             }
+        }
+        valid_locs.remove(&self.apple);
+        for s in self.snake.iter() {
+            valid_locs.remove(&s.0);
+        }
+        let valid_locs: Vec<Location> = valid_locs.into_iter().collect();
+        if !valid_locs.is_empty() {
+            self.apple = valid_locs[random() as usize * valid_locs.len()].clone();
         }
     }
 }
