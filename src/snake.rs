@@ -285,7 +285,7 @@ impl SnakeGameLogic {
     }
 
     fn place_new_apple(&mut self) {
-        let mut valid_locs: HashSet<Location> = HashSet::new();
+        let mut valid_locs: HashSet<Location> = HashSet::with_capacity(self.height as usize * self.width as usize * 2);
         for y in 0..(self.height as i32) {
             for x in 0..(self.width as i32) {
                 valid_locs.insert(Location{x, y});
@@ -297,7 +297,7 @@ impl SnakeGameLogic {
         }
         let valid_locs: Vec<Location> = valid_locs.into_iter().collect();
         if !valid_locs.is_empty() {
-            self.apple = valid_locs[random() as usize * valid_locs.len()].clone();
+            self.apple = valid_locs[(random() * valid_locs.len() as f64) as usize].clone();
         }
     }
 }
