@@ -6,6 +6,7 @@ use js_utils::get_date;
 use chrono::{DateTime, FixedOffset};
 use time::Duration;
 
+// struct representing the canvas and display logic
 pub struct Canvas {
     canvas_dom_element: CanvasElement,
     ctx: CanvasRenderingContext2d,
@@ -31,6 +32,7 @@ impl Canvas {
         })
     }
 
+    // returns a number of milliseconds to wait before rendering the next frame
     pub fn render(&mut self, data: &GraphicsData) -> i64 {
         let now = get_date();
         let mut time_diff: Duration = now - self.last_frame;
@@ -69,12 +71,16 @@ impl Canvas {
     fn draw_x(&self) {
         let w = self.canvas_dom_element.width() as f64;
         let h = self.canvas_dom_element.height() as f64;
+
+        // line from top left to bottom right corner
         self.ctx.set_stroke_style_color("black");
         self.ctx.set_line_width(2.0);
         self.ctx.begin_path();
         self.ctx.move_to(0.0, 0.0);
         self.ctx.line_to(w, h);
         self.ctx.stroke();
+        
+        // line from top right to bottom left corner
         self.ctx.set_line_width(2.0);
         self.ctx.begin_path();
         self.ctx.move_to(w, 0.0);
@@ -86,6 +92,7 @@ impl Canvas {
         let w = self.canvas_dom_element.width() as f64;
         let h = self.canvas_dom_element.height() as f64;
 
+        // horizontal lines
         let mut curr_h = h;
         while curr_h > 0.0 {
             self.ctx.set_stroke_style_color("grey");
@@ -97,6 +104,7 @@ impl Canvas {
             curr_h -= pixel_height;
         }
 
+        // vertical lines
         let mut curr_w = w;
         while curr_w > 0.0 {
             self.ctx.set_stroke_style_color("grey");
@@ -107,18 +115,6 @@ impl Canvas {
             self.ctx.stroke();
             curr_w -= pixel_width;
         }
-
-        self.ctx.set_stroke_style_color("black");
-        self.ctx.set_line_width(2.0);
-        self.ctx.begin_path();
-        self.ctx.move_to(0.0, 0.0);
-        self.ctx.line_to(w, h);
-        self.ctx.stroke();
-        self.ctx.set_line_width(2.0);
-        self.ctx.begin_path();
-        self.ctx.move_to(w, 0.0);
-        self.ctx.line_to(0.0, h);
-        self.ctx.stroke();
     }
 
     fn clear_screen(&self) {

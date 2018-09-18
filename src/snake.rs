@@ -26,6 +26,7 @@ pub enum MoveDirection {
 
 impl MoveDirection {
     pub fn opposite(self, other: MoveDirection) -> bool {
+        // hopefully the compiler simplifies this...
         (self == MoveDirection::Up && other == MoveDirection::Down) ||
             (self == MoveDirection::Down && other == MoveDirection::Up) ||
             (self == MoveDirection::Left && other == MoveDirection::Right) ||
@@ -45,6 +46,9 @@ enum CollisionType {
 pub struct GameResult {
     pub apples_eaten: u32,
     pub turns_passed: u32,
+    // binary data representing all of the moves made during the game
+    // used for the unimplemented replay feature & potentially high
+    // score validation
     pub history: Vec<u8>,
     pub width: u32,
     pub height: u32,
@@ -130,6 +134,7 @@ impl SnakeGameLogic {
             }
         }
 
+        // figure out how long we should wait before the next frame
         let next_frame_progress = time_diff.num_microseconds().unwrap() as f64
             / self.duration_between_frames.num_microseconds().unwrap() as f64;
         Ok(self.draw_screen(next_frame_progress))
@@ -222,21 +227,24 @@ impl SnakeGameLogic {
         self.snake.pop_front();
     }
 
+    // 0 <= progress <= 1 :: represents how far into the next square we are
     fn draw_screen(&self, progress: f64) -> GraphicsData {
         let mut graphics = GraphicsData::new(self.width, self.height);
+        // draw apple
         graphics.add_pixel(self.apple.x as u32, self.apple.y as u32, String::from("red"));
 
-        let mut prev: Option<&PreviousMove> = None;
-        for snake_piece in self.snake.iter() {
-            if let Some(snake_piece) = prev {
+        let mut snake_iter = self.snake.iter().peekable();
+        while let Some(snake_piece) = snake_iter.next() {
+            // skip the last piece
+            if snake_iter.peek().is_some() {
                 let snake_piece = snake_piece.0.clone();
                 graphics.add_pixel(snake_piece.x as u32, snake_piece.y as u32, String::from("green"));
             }
-            prev = Some(snake_piece);
         }
 
         if !self.eaten_this_frame {
             let first_piece = self.snake.front().unwrap();
+            // cOmPoSiTiOn AnD dEcOmPoSiTiOn
             let (c1, c2) = match first_piece.1 {
                 MoveDirection::Up => {
                     ((0.0, 1.0 - progress), (1.0, 1.0))
@@ -252,11 +260,11 @@ impl SnakeGameLogic {
                 },
             };
             let first_loc = &first_piece.0;
+            // draw the sub pixel that shows our progress into the next square
             graphics.add_sub_pixel(first_loc.x as u32, first_loc.y as u32, c1, c2, String::from("green"));
         }
 
         let last_piece = &self.snake.back().unwrap().0;
-        graphics.add_pixel(last_piece.x as u32, last_piece.y as u32, String::from("white"));
         let (c1, c2) = match self.last_direction {
             MoveDirection::Up => {
                 ((0.0, 1.0 - progress), (1.0, 1.0))
@@ -271,6 +279,7 @@ impl SnakeGameLogic {
                 ((progress - 1.0, 0.0), (1.0, 1.0))
             },
         };
+        // draw the sub pixel that shows our progress out of the last square of the snake
         graphics.add_sub_pixel(last_piece.x as u32, last_piece.y as u32, c1, c2, String::from("blue"));
         graphics
     }
@@ -284,6 +293,7 @@ impl SnakeGameLogic {
         });
     }
 
+    // this is a terrible solution but nothing better comes immediately to mind
     fn place_new_apple(&mut self) {
         let mut valid_locs: HashSet<Location> = HashSet::with_capacity(self.height as usize * self.width as usize * 2);
         for y in 0..(self.height as i32) {

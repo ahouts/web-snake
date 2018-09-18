@@ -32,6 +32,8 @@ struct Cfg {
     frame_rate: u32,
 }
 
+// just ignore all of the Rc<RefCell>>... rust isn't aware that it's
+// impossible to be multi-threaded in this wacky javascript world
 fn run_snake_game<F>(cfg_cell: &Rc<RefCell<Cfg>>, res: F)
     where F: FnOnce(Result<snake::GameResult, String>) + 'static {
     let cfg = cfg_cell.borrow_mut();
@@ -42,6 +44,7 @@ fn run_snake_game<F>(cfg_cell: &Rc<RefCell<Cfg>>, res: F)
 
     web::window().add_event_listener({
         let snake = snake_game.clone();
+        // only listen for key down events because the key press event has a 300ms delay
         move |event: KeyDownEvent| {
             let mut snake = snake.borrow_mut();
             match event.key().as_ref() {
@@ -49,7 +52,7 @@ fn run_snake_game<F>(cfg_cell: &Rc<RefCell<Cfg>>, res: F)
                 "s" | "S" | "ArrowDown" => snake.press_key(snake::MoveDirection::Down),
                 "a" | "A" | "ArrowLeft" => snake.press_key(snake::MoveDirection::Left),
                 "d" | "D" | "ArrowRight" => snake.press_key(snake::MoveDirection::Right),
-                _ => {}
+                _ => {},
             }
         }
     });
@@ -62,6 +65,8 @@ fn run_snake_game<F>(cfg_cell: &Rc<RefCell<Cfg>>, res: F)
         }
     };
 
+    // disgusting mouse click calculations...
+    // there is definitely a better way to do this
     cfg.canvas.clone().add_event_listener({
         let snake = snake_game.clone();
         let canvas = cfg.canvas.clone();
@@ -110,6 +115,9 @@ fn run_snake_game<F>(cfg_cell: &Rc<RefCell<Cfg>>, res: F)
     });
     let snake_canvas = Rc::new(RefCell::new(snake_canvas));
 
+    // recursive main loop
+    // no stack overflow because we are throwing the function calls in the event 
+    // loop & deconstructing the stack with set_timeout every iteration
     fn main_loop<F>(c: Rc<RefCell<canvas::Canvas>>, s: Rc<RefCell<snake::SnakeGameLogic>>, res: F)
         where F: FnOnce(Result<snake::GameResult, String>) + 'static {
         let snake_ref = s.clone();

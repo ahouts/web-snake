@@ -30,6 +30,7 @@ impl Triangle {
         }
     }
 
+    // blatant copy paste
     // https://stackoverflow.com/questions/2049582/how-to-determine-if-a-point-is-in-a-2d-triangle
     pub fn contains(&self, p: &Point) -> bool {
         let p0 = &self.p0;
