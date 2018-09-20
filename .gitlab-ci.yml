@@ -26,5 +26,6 @@ deploy:
   script:
   - pip install awscli
   - aws s3 cp ./static/ s3://snake.ahouts.com/ --recursive
+  - aws s3 cp --content-type 'application/wasm' s3://snake.ahouts.com/web-snake.wasm s3://snake.ahouts.com/web-snake.wasm --metadata-directive REPLACE
   - aws cloudfront create-invalidation --distribution-id E7AID7CR7V4S3 --paths '/*'
 
