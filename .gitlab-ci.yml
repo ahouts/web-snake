@@ -9,7 +9,7 @@ build:
   - apt-get update
   - apt-get install -y libssl-dev openssl pkg-config
   - cargo install cargo-web -f
-  - cargo web build
+  - cargo web build --release
   - cp ./target/wasm32-unknown-unknown/release/web-snake.js ./static/
   - cp ./target/wasm32-unknown-unknown/release/web-snake.wasm ./static/
   artifacts:
@@ -28,4 +28,3 @@ deploy:
   - aws s3 cp ./static/ s3://snake.ahouts.com/ --recursive
   - aws s3 cp --content-type 'application/wasm' s3://snake.ahouts.com/web-snake.wasm s3://snake.ahouts.com/web-snake.wasm --metadata-directive REPLACE
   - aws cloudfront create-invalidation --distribution-id E7AID7CR7V4S3 --paths '/*'
-

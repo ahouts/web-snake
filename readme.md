@@ -4,7 +4,7 @@
 Install [rustup](https://rustup.rs/) if you havent already.
 
 ```bash
-git clone https://gitlab.ahouts.com/ahouts/web-snake.git
+git clone https://gitlab.com/ahouts/web-snake.git
 cd web-snake
 
 # install web cargo extension
